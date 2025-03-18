@@ -9,7 +9,6 @@ from src.app.middleware.error_handler import add_error_handlers
 from src.app.api.v1 import users  
 
 
-
 # Initialize FastAPI app
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -30,6 +29,7 @@ app.add_middleware(
 
 # Register routes
 app.include_router(users.router, prefix="/api/v1/users", tags=["Users"])
+
 
 
 # Add global error handlers

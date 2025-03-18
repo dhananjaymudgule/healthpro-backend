@@ -1,7 +1,11 @@
 fastapi 
 uvicorn 
+python-multipart 
 pydantic 
 pydantic-settings
-python-multipart 
+pydantic[email]
 passlib[bcrypt]
+python-jose[cryptography]
 sqlalchemy
+psycopg2-binary
+alembic

@@ -12,10 +12,14 @@ class Settings(BaseSettings):
     PROJECT_NAME: str 
     PROJECT_DESCRIPTION: str 
 
-    # basic
+    # db
     DATABASE_URL: str
+
+    # security
+    ALGORITHM: str
     SECRET_KEY: str
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60  # Token expiry
+    ACCESS_TOKEN_EXPIRE_MINUTES: int 
+    REFRESH_TOKEN_EXPIRE_DAYS: int
 
     # email config
     EMAIL_SENDER: str
