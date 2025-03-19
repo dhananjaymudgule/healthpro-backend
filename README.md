@@ -1,5 +1,18 @@
-# Updated FastAPI Project Structure for Health Tech Platform with User Onboarding
+# HealthPro - A Health Tech Platform
 
+## Overview
+HealthPro is a FastAPI-based health tech platform designed for user onboarding with authentication and role-based access control (RBAC). The platform supports email verification, password-based authentication, token-based authorization, and password reset functionalities.
+
+## Features
+- User Registration with Email Verification
+- Role-Based Access Control (RBAC) (Admin, Doctor, Patient)
+- Secure Authentication (JWT Tokens - Access & Refresh)
+- Password Reset via Email
+- Logout and Token Revocation
+- API Documentation via Swagger UI
+
+## Project Structure
+```
 my_fastapi_project/
 ├── src/
 │   ├── app/
@@ -9,88 +22,111 @@ my_fastapi_project/
 │   │   │   │   ├── items.py
 │   │   ├── modules/
 │   │   │   ├── users/
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── routes.py          # User-related API endpoints (Signup, Login)
+│   │   │   │   ├── routes.py          # User-related API endpoints (Signup, Login, Logout, Password Reset)
 │   │   │   │   ├── dependencies.py    # User-specific dependencies
 │   │   │   │   ├── services.py        # Business logic for onboarding users
 │   │   │   │   ├── schemas.py         # Pydantic models for request validation
 │   │   │   │   ├── models.py          # User database model
-│   │   │   ├── items/
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── routes.py
-│   │   │   │   ├── dependencies.py
-│   │   │   │   ├── services.py
-│   │   │   │   ├── schemas.py
-│   │   │   │   ├── models.py
 │   │   ├── core/
-│   │   │   ├── __init__.py
 │   │   │   ├── config.py
 │   │   │   ├── security.py            # Authentication & password hashing utilities
-│   │   │   ├── events.py
-│   │   │   ├── logging.py
 │   │   │   ├── exceptions.py
-│   │   ├── middleware/
-│   │   │   ├── __init__.py
-│   │   │   ├── error_handler.py
 │   │   ├── db/
-│   │   │   ├── __init__.py
 │   │   │   ├── session.py
-│   │   │   ├── migrations/
 │   │   │   ├── models/
-│   │   │   │   ├── __init__.py
 │   │   │   │   ├── user.py             # Database model for user onboarding
-│   │   │   │   ├── item.py
 │   │   │   ├── repositories/
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── base.py
 │   │   │   │   ├── user_repository.py  # CRUD operations for users
-│   │   │   │   ├── item_repository.py
-│   │   ├── utils/
-│   │   │   ├── __init__.py
-│   │   │   ├── common.py
 │   │   ├── tasks/
-│   │   │   ├── __init__.py
 │   │   │   ├── email.py               # Email verification tasks
-│   │   │   ├── periodic_jobs.py
-│   │   ├── cache/
-│   │   │   ├── __init__.py
-│   │   │   ├── redis.py
 │   │   ├── main.py
-│   ├── tests/
-│   │   ├── __init__.py
-│   │   ├── conftest.py
-│   │   ├── test_users/
-│   │   │   ├── __init__.py
-│   │   │   ├── test_routes.py         # Test user onboarding API
-│   │   │   ├── test_schemas.py
-│   │   │   ├── test_services.py
-│   │   │   ├── test_models.py
-│   │   ├── test_items/
-│   │   │   ├── __init__.py
-│   │   │   ├── test_routes.py
-│   │   │   ├── test_schemas.py
-│   │   │   ├── test_services.py
-│   │   │   ├── test_models.py
-│   ├── run.py
+├── tests/
+│   ├── test_users/
+│   │   ├── test_routes.py         # Test user onboarding API
 ├── Dockerfile
-├── docker-compose.yml
-├── .github/
-│   ├── workflows/
-│   │   ├── ci.yml
-├── .pre-commit-config.yaml
-├── .env
 ├── .env.example
 ├── .gitignore
 ├── requirements.txt
-├── requirements-dev.txt
-├── pyproject.toml
-├── Makefile
-├── alembic.ini
 ├── README.md
+```
 
-# Update Imports in Python Files
-def example_import():
-    from src.app.core.config import settings
-    from src.app.modules.users.services import UserService
-    from src.app.db.session import get_db
-    print("Updated imports for src structure!")
+## Installation
+### Prerequisites
+- Python 3.10+
+- PostgreSQL Database
+- Docker (optional for containerized deployment)
+
+### Setup Steps
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-repo/healthpro.git
+   cd healthpro
+   ```
+
+2. Create and activate a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Configure environment variables:
+   Copy `.env.example` to `.env` and update the values as per your database and email settings.
+
+5. Run database migrations:
+   ```bash
+   alembic upgrade head
+   ```
+
+6. Start the FastAPI server:
+   ```bash
+   uvicorn src.app.main:app --reload
+   ```
+
+## API Endpoints
+### Authentication & User Management
+| Method | Endpoint                         | Description                    |
+|--------|----------------------------------|--------------------------------|
+| POST   | `/api/v1/users/verify-email`     | Verify email before signup    |
+| POST   | `/api/v1/users/signup`           | Register new user             |
+| POST   | `/api/v1/users/login`            | Authenticate user             |
+| POST   | `/api/v1/users/logout`           | Logout user                   |
+| POST   | `/api/v1/users/refresh`          | Refresh access token          |
+| GET    | `/api/v1/users/me`               | Get user profile              |
+| POST   | `/api/v1/users/password-reset`   | Request password reset email  |
+| POST   | `/api/v1/users/password-reset/confirm` | Reset password      |
+
+### Admin & User Management
+| Method | Endpoint                         | Description                    |
+|--------|----------------------------------|--------------------------------|
+| GET    | `/api/v1/users/admin`            | Admin-only dashboard           |
+| GET    | `/api/v1/users/list`             | List all users (Admin only)    |
+
+### API Documentation
+Once the server is running, access API docs:
+- Swagger UI: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- Redoc UI: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+
+## Running with Docker
+1. Build the Docker image:
+   ```bash
+   docker build -t healthpro .
+   ```
+2. Run the container:
+   ```bash
+   docker run -p 8000:8000 --env-file .env healthpro
+   ```
+
+## Contributing
+1. Fork the repository.
+2. Create a new branch (`feature-xyz`).
+3. Commit your changes.
+4. Push to your branch and create a Pull Request.
+
+## License
+This project is licensed under the MIT License.
+
