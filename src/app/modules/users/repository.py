@@ -21,6 +21,9 @@ def create_user(db: Session, user_data: UserCreate):
 def get_user_by_email(db: Session, email: str):
     return db.query(User).filter(User.email == email).first()
 
+def get_user_by_refresh_token(db: Session, refresh_token: str):
+    return db.query(User).filter(User.refresh_token == refresh_token).first()
+
 def store_refresh_token(db: Session, email: str, refresh_token: str):
     user = get_user_by_email(db, email)
     if user:
