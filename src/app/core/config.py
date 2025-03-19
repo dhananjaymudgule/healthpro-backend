@@ -20,12 +20,18 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int 
     REFRESH_TOKEN_EXPIRE_DAYS: int
+    PASSWORD_RESET_TOKEN_EXPIRE_MINUTES: int
+    EMAIL_VERIFICATION_TOKEN_EXPIRE_MINUTES: int
 
     # email config
-    EMAIL_SENDER: str
-    EMAIL_PASSWORD: str
-    SMTP_SERVER: str   
-    SMTP_PORT: int  
+    MAIL_USERNAME: str
+    MAIL_PASSWORD: str
+    MAIL_FROM: str
+    MAIL_PORT: int
+    MAIL_SERVER: str
+    MAIL_STARTTLS: bool
+    MAIL_SSL_TLS: bool
+    USE_CREDENTIALS: bool
 
 
     # API Keys

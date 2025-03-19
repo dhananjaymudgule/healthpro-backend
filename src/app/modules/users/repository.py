@@ -32,6 +32,14 @@ def store_refresh_token(db: Session, email: str, refresh_token: str):
         db.commit()
         db.refresh(user)  # Ensure the latest data is fetched
 
+def clear_refresh_token(db: Session, email: str):
+    """
+    Clears the stored refresh token for the given user.
+    """
+    user = get_user_by_email(db, email)
+    if user:
+        user.refresh_token = None  # Remove token
+        db.commit()
 
 def validate_refresh_token(db: Session, email: str, refresh_token: str) -> bool:
     user = get_user_by_email(db, email)

@@ -21,6 +21,8 @@ SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 REFRESH_TOKEN_EXPIRE_DAYS = settings.REFRESH_TOKEN_EXPIRE_DAYS
+PASSWORD_RESET_TOKEN_EXPIRE_MINUTES = settings.PASSWORD_RESET_TOKEN_EXPIRE_MINUTES
+EMAIL_VERIFICATION_TOKEN_EXPIRE_MINUTES = settings.EMAIL_VERIFICATION_TOKEN_EXPIRE_MINUTES
 
 #  Create JWT access token
 def create_access_token(data: dict, expires_delta: timedelta = None):
@@ -56,4 +58,33 @@ def verify_refresh_token(token: str, user):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
 
     return user.email
+
+# password reset token
+def create_password_reset_token(email: str):
+    expire = datetime.now(timezone.utc) + timedelta(minutes=PASSWORD_RESET_TOKEN_EXPIRE_MINUTES)  
+    data = {"sub": email, "exp": expire}
+    return jwt.encode(data, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+
+# verify password reset token
+def verify_password_reset_token(token: str):
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        return payload.get("sub")  # Return email
+    except jwt.JWTError:
+        return None
+
+# email verification token
+def create_email_verification_token(email: str):
+    expire = datetime.now(timezone.utc) + timedelta(minutes=EMAIL_VERIFICATION_TOKEN_EXPIRE_MINUTES)  # Token expires in 1 hour
+    payload = {"sub": email, "exp": expire}
+    return jwt.encode(payload, SECRET_KEY, algorithm=settings.ALGORITHM)
+
+
+# verify email verification token
+def verify_email_verification_token(token: str):
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        return payload.get("sub")  # Return email
+    except jwt.JWTError:
+        return None
 
