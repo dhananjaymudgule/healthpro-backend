@@ -1,0 +1,13 @@
+[tool.poetry]
+name = "healthpro"
+version = "0.1.0"
+description = "A FastAPI health tech platform"
+authors = ["Dhananjay Mudgule"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.95.0"
+uvicorn = "^0.23.0"
+
+[tool.black]
+line-length = 88

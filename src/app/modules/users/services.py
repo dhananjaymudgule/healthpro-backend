@@ -2,6 +2,8 @@
 
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
+from email_validator import validate_email, EmailNotValidError
+
 from src.app.modules.users.schemas import (VerifyEmailResponse, UserCreate,
                                            PasswordResetResponse)
 
@@ -12,18 +14,26 @@ from src.app.core.security import (verify_password, create_access_token, create_
 from src.app.tasks.email import send_email  
 
 
-
 async def request_email_verification(db: Session, email: str):
+    # Check if email is valid (format + domain)
+    try:
+        validation = validate_email(email, check_deliverability=True)
+        email = validation.email  # Normalized email
+    except EmailNotValidError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    # Check if user already exists
     existing_user = get_user_by_email(db, email)
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
+
     # Generate email verification token
     verification_token = create_email_verification_token(email)
+
     # Send verification email
     verification_link = f"https://yourfrontend.com/verify-email?token={verification_token}"
     await send_email(email_to=email, subject="Verify Your Email", body=f"Click here to verify: {verification_link}")
-    
-    # return {"message": "Verification email sent. Please check your inbox."}
+
     return VerifyEmailResponse(message="Verification email sent. Please check your inbox.")
 
 

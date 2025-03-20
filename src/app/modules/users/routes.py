@@ -1,6 +1,8 @@
 # src/app/modules/users/routes.py
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, UploadFile, File
+
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -8,31 +10,24 @@ from src.app.modules.users.schemas import (VerifyEmailRequest,VerifyEmailRespons
                                            UserCreate, UserResponse, 
                                            UserLogin, Token, TokenRefreshRequest, 
                                            PasswordResetRequest,PasswordResetResponse,
-                                           PasswordResetConfirm,
-                                           )
-from src.app.modules.users.services import (register_user, authenticate_user, request_password_reset,
+                                           PasswordResetConfirm)
+from src.app.modules.users.services import (register_user, 
+                                            authenticate_user, 
+                                            request_password_reset,
                                             request_email_verification)
+from src.app.modules.users.repository import (get_user_by_email, 
+                                              get_all_users,
+                                              get_user_by_refresh_token,
+                                              clear_refresh_token)
+from src.app.modules.users.dependencies import (get_current_user, is_admin)
+from src.app.core.security import (create_access_token, verify_refresh_token)
+from src.app.core.security import (hash_password, verify_password_reset_token )
 from src.app.db.session import get_db
-from src.app.modules.users.repository import get_user_by_email, get_all_users
-from src.app.modules.users.repository import get_user_by_refresh_token 
-from src.app.modules.users.repository import clear_refresh_token
-from src.app.core.security import create_access_token, verify_refresh_token
-from src.app.modules.users.dependencies import get_current_user, is_admin
-
-from src.app.core.security import (hash_password, verify_password_reset_token, 
-                                   create_email_verification_token,
-                                   verify_email_verification_token)
-from src.app.tasks.email import send_email  
+from src.app.modules.users import file_handler
 
 
 router = APIRouter()
 
-
-# User signup
-# @router.post("/signup", response_model=UserResponse)
-# def signup(user_data: UserCreate, db: Session = Depends(get_db)):
-#     user = register_user(db, user_data)
-#     return user
 
 @router.post("/verify-email", response_model=VerifyEmailResponse)
 async def verify_email(request: VerifyEmailRequest, db: Session = Depends(get_db)):
@@ -134,5 +129,17 @@ def password_reset_confirm(request: PasswordResetConfirm, db: Session = Depends(
     db.commit()
     return {"message": "Password has been reset successfully"}
 
+
+
+
+@router.post("/upload-file/", tags=["Users"])
+async def upload_file(
+    file: UploadFile = File(...),
+    current_user: dict = Depends(get_current_user)  # Ensuring only logged-in users
+):
+    """
+    Upload a file (PDF/Image) for a logged-in user.
+    """
+    return await file_handler.process_upload(file, current_user)
 
 

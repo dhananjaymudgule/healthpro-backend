@@ -2,8 +2,19 @@
 
 from pydantic_settings import BaseSettings
 from typing import Optional
+from pathlib import Path
+
 
 class Settings(BaseSettings):
+
+    # Base directory (Project root)
+    BASE_DIR: Path = Path(__file__).resolve().parents[1]  # Go 4 levels up
+    print(f"BASE_DIR: {BASE_DIR}")
+    
+    # Upload directory
+    UPLOAD_DIR: Path = BASE_DIR / "uploads"
+    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)  # Ensure upload directory exists
+
     
     # General settings
     VERSION: str 
@@ -14,6 +25,13 @@ class Settings(BaseSettings):
 
     # db
     DATABASE_URL: str
+    # db url parsed
+    DB_USER: str
+    DB_PASSWORD: str
+    DB_HOST: str
+    DB_PORT: int
+    DB_NAME: str
+
 
     # security
     ALGORITHM: str
