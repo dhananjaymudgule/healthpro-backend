@@ -1,132 +1,213 @@
-# HealthPro - A Health Tech Platform
+# **HealthPro - A Health Tech Platform**  
 
-## Overview
-HealthPro is a FastAPI-based health tech platform designed for user onboarding with authentication and role-based access control (RBAC). The platform supports email verification, password-based authentication, token-based authorization, and password reset functionalities.
+## **Overview**  
+HealthPro is a **FastAPI-based** health tech platform designed to support **user authentication, onboarding, and role-based access control (RBAC)**. It provides **secure user registration, authentication, email verification, patient record management, and JWT-based authorization**.
 
-## Features
-- User Registration with Email Verification
-- Role-Based Access Control (RBAC) (Admin, Doctor, Patient)
-- Secure Authentication (JWT Tokens - Access & Refresh)
-- Password Reset via Email
-- Logout and Token Revocation
-- API Documentation via Swagger UI
+---
 
-## Project Structure
+## **Features**
+✅ **User Authentication & Role-Based Access Control (RBAC)** (Admin, Doctor, Patient)  
+✅ **JWT Token Authentication** (Access & Refresh Tokens)  
+✅ **Email Verification & Password Reset**  
+✅ **CRUD Operations for Users & Patients**  
+✅ **PostgreSQL Database with Async SQLAlchemy & Alembic Migrations**  
+✅ **Docker Support for Easy Deployment**  
+
+---
+
+## **Project Structure**
 ```
-my_fastapi_project/
+healthpro-backend/
 ├── src/
 │   ├── app/
-│   │   ├── api/
-│   │   │   ├── v1/
-│   │   │   │   ├── users.py
-│   │   │   │   ├── items.py
-│   │   ├── modules/
-│   │   │   ├── users/
-│   │   │   │   ├── routes.py          # User-related API endpoints (Signup, Login, Logout, Password Reset)
-│   │   │   │   ├── dependencies.py    # User-specific dependencies
-│   │   │   │   ├── services.py        # Business logic for onboarding users
-│   │   │   │   ├── schemas.py         # Pydantic models for request validation
-│   │   │   │   ├── models.py          # User database model
-│   │   ├── core/
+│   │   ├── core/                  # Configuration & security utilities
 │   │   │   ├── config.py
-│   │   │   ├── security.py            # Authentication & password hashing utilities
-│   │   │   ├── exceptions.py
+│   │   │   ├── security.py
 │   │   ├── db/
-│   │   │   ├── session.py
-│   │   │   ├── models/
-│   │   │   │   ├── user.py             # Database model for user onboarding
-│   │   │   ├── repositories/
-│   │   │   │   ├── user_repository.py  # CRUD operations for users
-│   │   ├── tasks/
-│   │   │   ├── email.py               # Email verification tasks
-│   │   ├── main.py
-├── tests/
-│   ├── test_users/
-│   │   ├── test_routes.py         # Test user onboarding API
+│   │   │   ├── models/                # Database models
+│   │   │   │   ├── user.py
+│   │   │   │   ├── patient.py
+│   │   │   ├── repositories/          # CRUD operations
+│   │   │   │   ├── user_repository.py
+│   │   │   │   ├── patient_repository.py
+│   │   │   ├── session.py             # Async DB session handling
+│   │   ├── modules/
+│   │   │   ├── users/                 # User authentication & management
+│   │   │   │   ├── routes.py
+│   │   │   │   ├── services.py
+│   │   │   │   ├── schemas.py
+│   │   │   │   ├── dependencies.py    # User-specific dependencies
+│   │   │   ├── patients/              # Patient record management
+│   │   │   │   ├── routes.py
+│   │   │   │   ├── services.py
+│   │   │   │   ├── schemas.py
+│   │   ├── main.py                  # FastAPI entry point
+│   ├── tests/                       # Unit & integration tests
+├── alembic/                         # Database migrations
+├── docs/                            # Detailed documentation
+├── uploads/                         # Uploaded files
+├── venv/                            # When you create venv
 ├── Dockerfile
 ├── .env.example
 ├── .gitignore
+├── alembic.ini
 ├── requirements.txt
 ├── README.md
 ```
 
-## Installation
-### Prerequisites
-- Python 3.12.3
-- PostgreSQL Database
-- Docker (optional for containerized deployment)
+---
 
-### Setup Steps
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-repo/healthpro.git
-   cd healthpro
-   ```
+## **Installation & Setup**  
 
-2. Create and activate a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+### **Prerequisites**  
+- ✅ **Python 3.12.3**  
+- ✅ **PostgreSQL (Recommended: v17+)**  
+- ✅ **Docker** (Optional for containerized deployment)
 
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+### **1️⃣ Clone the Repository**
+```bash
+git clone https://github.com/your-repo/healthpro.git
+cd healthpro-backend
+```
 
-4. Configure environment variables:
-   Copy `.env.example` to `.env` and update the values as per your database and email settings.
+### **2️⃣ Set Up a Virtual Environment**  
+```bash
+python -m venv venv
 
-5. Run database migrations:
-   ```bash
-   alembic upgrade head
-   ```
+source venv/bin/activate # on Macos
 
-6. Start the FastAPI server:
-   ```bash
-   uvicorn src.app.main:app --reload
-   ```
+venv\Scripts\activate # On Windows
+```
 
-## API Endpoints
-### Authentication & User Management
+### **3️⃣ Install Dependencies**  
+```bash
+pip install -r requirements.txt
+```
+
+### **4️⃣ Configure Environment Variables**  
+Copy the `.env.example` file to `.env` and update database credentials:  
+```
+DATABASE_URL=postgresql+asyncpg://postgres:yourpassword@localhost:5432/healthpro_db
+SECRET_KEY=your-secret-key
+```
+
+---
+
+## **Database Migrations**  
+💾 **Ensure PostgreSQL is running before running migrations.**  
+```bash
+alembic upgrade head  # Apply database migrations
+```
+To create a new migration after model changes:  
+```bash
+alembic revision --autogenerate -m "Describe migration change"
+alembic upgrade head
+```
+
+---
+
+## **Running the Server**  
+🚀 **Start FastAPI with Uvicorn**  
+```bash
+uvicorn src.app.main:app --reload
+```
+✅ Visit the API documentation at:  
+- [Swagger UI](http://127.0.0.1:8000/docs)  
+- [ReDoc](http://127.0.0.1:8000/redoc)  
+
+---
+
+## **API Endpoints**  
+### **🔐 Authentication & User Management**
 | Method | Endpoint                         | Description                    |
 |--------|----------------------------------|--------------------------------|
-| POST   | `/api/v1/users/verify-email`     | Verify email before signup    |
+| POST   | `/api/v1/users/verify-email`     | Send email verification link  |
 | POST   | `/api/v1/users/signup`           | Register new user             |
 | POST   | `/api/v1/users/login`            | Authenticate user             |
-| POST   | `/api/v1/users/logout`           | Logout user                   |
-| POST   | `/api/v1/users/refresh`          | Refresh access token          |
-| GET    | `/api/v1/users/me`               | Get user profile              |
+| POST   | `/api/v1/users/logout`           | Logout user & revoke token    |
+| POST   | `/api/v1/users/refresh`          | Refresh JWT access token      |
+| GET    | `/api/v1/users/me`               | Get logged-in user profile    |
 | POST   | `/api/v1/users/password-reset`   | Request password reset email  |
 | POST   | `/api/v1/users/password-reset/confirm` | Reset password      |
 
-### Admin & User Management
-| Method | Endpoint                         | Description                    |
-|--------|----------------------------------|--------------------------------|
-| GET    | `/api/v1/users/admin`            | Admin-only dashboard           |
-| GET    | `/api/v1/users/list`             | List all users (Admin only)    |
 
-### API Documentation
-Once the server is running, access API docs:
-- Swagger UI: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-- Redoc UI: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+### **File Upload**  
+| Method | Endpoint                        | Description   |  
+|--------|---------------------------------|--------------|  
+| POST   | `/api/v1/users/upload-file/`    | Upload File  |  
 
-## Running with Docker
-1. Build the Docker image:
+
+### **🏥 Patient Record Management**
+| Method | Endpoint                      | Description                         |
+|--------|--------------------------------|-------------------------------------|
+| POST   | `/api/v1/patients/patient`    | Create new patient record (one per user) |
+| GET    | `/api/v1/patients/patient`    | Retrieve logged-in patient info    |
+| PATCH  | `/api/v1/patients/patient`    | Update specific fields in patient record |
+| DELETE | `/api/v1/patients/patient`    | Delete patient record (Admin Only) |
+
+
+### **🛠️ Admin & User Management**
+| Method | Endpoint                    | Description                  |
+|--------|-----------------------------|------------------------------|
+| GET    | `/api/v1/users/admin`       | Access admin-only dashboard |
+| GET    | `/api/v1/users/list`        | List all users (Admin only) |
+
+---
+
+## **Security & Access Control**
+✅ **JWT Token Authentication**  
+All protected endpoints require an **Authorization Header**:  
+```
+Authorization: Bearer <ACCESS_TOKEN>
+```
+
+✅ **Role-Based Access Control (RBAC)**
+- **Admin** → Manage users & data  
+- **Doctor** → View & update patient records  
+- **Patient** → View & manage their own record  
+
+---
+
+## **Running with Docker**
+1. **Build the Docker image**  
    ```bash
    docker build -t healthpro .
    ```
-2. Run the container:
+2. **Run the container**  
    ```bash
    docker run -p 8000:8000 --env-file .env healthpro
    ```
+3. **Verify API is running**  
+   ```bash
+   curl http://127.0.0.1:8000/docs
+   ```
 
-## Contributing
-1. Fork the repository.
-2. Create a new branch (`feature-xyz`).
-3. Commit your changes.
-4. Push to your branch and create a Pull Request.
+---
 
-## License
-This project is licensed under the MIT License.
+## **Development & Testing**
+🧪 **Run Tests**  
+```bash
+pytest
+```
+
+---
+
+## **Contributing**
+Want to contribute? 🚀 Follow these steps:  
+1. Fork the repository.  
+2. Create a new feature branch (`feature-xyz`).  
+3. Commit your changes.  
+4. Push to your branch and open a **Pull Request (PR)**.  
+
+---
+
+## **License**
+📜 This project is licensed under the **License**.
+
+---
+
+## **🚀 Next Steps**
+🔹 Deploy to **AWS, GCP, or Azure**  
+🔹 Integrate **CI/CD Pipelines** (GitHub Actions)  
+🔹 Improve **API Rate Limiting & Security**  
 
