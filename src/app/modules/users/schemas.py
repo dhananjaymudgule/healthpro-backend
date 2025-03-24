@@ -1,12 +1,10 @@
 # src/app/modules/users/schemas.py
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from uuid import UUID
 from src.app.db.models.user import UserRole  
 
-
-from pydantic import BaseModel, EmailStr, Field
-from src.app.db.models.user import UserRole
+# Pydantic v2 Fix: Use `ConfigDict(from_attributes=True)` instead of `Config.from_attributes`
 
 # Email Verification Request
 class VerifyEmailRequest(BaseModel):
@@ -24,7 +22,6 @@ class UserCreate(BaseModel):
     role: UserRole = UserRole.PATIENT  # Default role is PATIENT
     token: str  #  User must provide the verification token received via email
 
-
 class UserResponse(BaseModel):
     id: UUID
     name: str
@@ -32,41 +29,36 @@ class UserResponse(BaseModel):
     is_active: bool
     role: UserRole  # Return role in response
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}  # ✅ Pydantic v2 Fix
 
-# log in request schema
+# Log in request schema
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
-#log in response schema
+# Log in response schema
 class Token(BaseModel):
     access_token: str
     refresh_token: str
     token_type: str
 
-# logout  Response schema
+# Logout response schema
 class LogoutResponse(BaseModel):
     message: str
 
-# refresh token schema
+# Refresh token schema
 class TokenRefreshRequest(BaseModel):
     refresh_token: str
 
-
-# password reset request
+# Password reset request
 class PasswordResetRequest(BaseModel):
     email: EmailStr
 
-# password reset response
+# Password reset response
 class PasswordResetResponse(BaseModel):
     message: str
 
-# password reset confirm schema
+# Password reset confirm schema
 class PasswordResetConfirm(BaseModel):
     token: str
     new_password: str
-
-
-

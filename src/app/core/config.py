@@ -23,6 +23,8 @@ class Settings(BaseSettings):
     PROJECT_NAME: str 
     PROJECT_DESCRIPTION: str 
 
+    API_VERSION: str
+
     # db
     DATABASE_URL: str
     # db url parsed

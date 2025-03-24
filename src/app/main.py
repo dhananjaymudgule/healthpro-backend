@@ -7,6 +7,7 @@ from src.app.core.config import settings
 from src.app.middleware.error_handler import add_error_handlers
 
 from src.app.api.v1 import users  
+from src.app.api.v1 import patients 
 
 
 # Initialize FastAPI app
@@ -27,9 +28,15 @@ app.add_middleware(
 )
 
 
-# Register routes
-app.include_router(users.router, prefix="/api/v1/users", tags=["Users"])
 
+# Use API_VERSION from config.py
+API_PREFIX = f"/api/{settings.API_VERSION}"
+
+# Register routes
+# users
+app.include_router(users.router, prefix=f"{API_PREFIX}/users", tags=["Users"])
+# patients
+app.include_router(patients.router, prefix=f"{API_PREFIX}/patients", tags=["Patients"])
 
 
 # Add global error handlers

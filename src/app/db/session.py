@@ -1,17 +1,25 @@
 # src/app/db/session.py
 
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
 from src.app.core.config import settings
 
-engine = create_engine(settings.DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# # Ensure database URL uses asyncpg (not psycopg2)
+# DATABASE_URL = settings.DATABASE_URL.replace("postgresql+psycopg2", "postgresql+asyncpg")
+
+# Create async engine
+engine = create_async_engine(settings.DATABASE_URL, echo=True, future=True)
+
+# Create async session
+SessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
+# Keep using Base for SQLAlchemy models
 Base = declarative_base()
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+# Dependency for async database session
+async def get_db():
+    async with SessionLocal() as session:
+        yield session
+
+
+

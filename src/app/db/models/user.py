@@ -1,10 +1,10 @@
 # src/app/db/models/user.py
 
-from sqlalchemy import Column, Integer, String, Boolean, Enum
+from sqlalchemy import Column, String, Boolean, Enum
 from enum import Enum as PyEnum
 import uuid
+from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
-
 from src.app.db.session import Base
 
 # Define user roles
@@ -24,6 +24,5 @@ class User(Base):
     role = Column(Enum(UserRole), default=UserRole.PATIENT, nullable=False)
     refresh_token = Column(String, nullable=True)  # Store the refresh token
 
-
-
-
+    # One-to-One Relationship with Patient
+    patient = relationship("Patient", uselist=False, back_populates="user")

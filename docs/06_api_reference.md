@@ -1,4 +1,30 @@
 # API Reference
+```
+src/
+├── app/
+│   ├── api/
+│   │   ├── v1/
+│   │   │   ├── users.py  <-- Registers routes from modules/users/routes.py
+│   ├── modules/
+│   │   ├── users/
+│   │   │   ├── routes.py  <-- Defines user-related API endpoints
+│   ├── main.py  <-- Registers routes globally
+```
+
+
+```src/
+├── app/
+│   ├── api/
+│   │   ├── v1/
+│   │   │   ├── patients.py  <-- Register patient-related routes
+│   ├── modules/
+│   │   ├── patients/
+│   │   │   ├── routes.py  <-- Defines /api/v1/patient-info/{user_id} endpoint
+│   │   │   ├── models.py  <-- PatientInfo database model
+│   │   │   ├── schemas.py  <-- Pydantic models
+│   │   │   ├── services.py  <-- Business logic for patient info
+│   ├── main.py  <-- Registers API routes
+```
 
 ## Users Endpoints
 

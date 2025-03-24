@@ -13,9 +13,16 @@ from src.app.core.config import settings
 from src.app.db.session import Base
 from src.app.db.models import user
 
+
+
 #  Set the Alembic configuration
 config = context.config
-config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+# config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+
+
+#  Convert asyncpg to psycopg2 (sync) just for Alembic migrations
+SYNC_DATABASE_URL = settings.DATABASE_URL.replace("asyncpg", "psycopg2")
+config.set_main_option("sqlalchemy.url", SYNC_DATABASE_URL)
 
 #  Set metadata to detect model changes
 target_metadata = Base.metadata
