@@ -8,6 +8,8 @@ from src.app.middleware.error_handler import add_error_handlers
 
 from src.app.api.v1 import users  
 from src.app.api.v1 import patients 
+from src.app.api.v1 import chatbot
+
 
 
 # Initialize FastAPI app
@@ -37,6 +39,8 @@ API_PREFIX = f"/api/{settings.API_VERSION}"
 app.include_router(users.router, prefix=f"{API_PREFIX}/users", tags=["Users"])
 # patients
 app.include_router(patients.router, prefix=f"{API_PREFIX}/patients", tags=["Patients"])
+# chatbot
+app.include_router(chatbot.router, prefix=f"{API_PREFIX}/chatbot", tags=["Chatbot"])
 
 
 # Add global error handlers

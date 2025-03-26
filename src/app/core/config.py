@@ -9,7 +9,7 @@ class Settings(BaseSettings):
 
     # Base directory (Project root)
     BASE_DIR: Path = Path(__file__).resolve().parents[1]  # Go 4 levels up
-    print(f"BASE_DIR: {BASE_DIR}")
+    # print(f"BASE_DIR: {BASE_DIR}")
     
     # Upload directory
     UPLOAD_DIR: Path = BASE_DIR / "uploads"
@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     DB_PORT: int
     DB_NAME: str
 
+    MONGO_DB_URI: str
 
     # security
     ALGORITHM: str

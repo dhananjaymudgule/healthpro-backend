@@ -3,6 +3,8 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
+from fastapi.security import OAuth2PasswordRequestForm
+
 
 from src.app.modules.users.schemas import (
     VerifyEmailRequest, VerifyEmailResponse,
@@ -38,11 +40,15 @@ from src.app.core.security import (
 from src.app.db.session import get_db
 from src.app.modules.users import file_handler
 
+from src.app.core.logging_config import user_logger  
+
+
 router = APIRouter()
 
 @router.post("/verify-email", response_model=VerifyEmailResponse)
 async def verify_email(request: VerifyEmailRequest, db: AsyncSession = Depends(get_db)):
     return await request_email_verification(db, request.email)
+
 
 @router.post("/signup", response_model=UserResponse)
 async def signup(user_data: UserCreate, db: AsyncSession = Depends(get_db)):
@@ -53,9 +59,13 @@ async def signup(user_data: UserCreate, db: AsyncSession = Depends(get_db)):
 
 # User login
 @router.post("/login", response_model=Token)
-async def login(user_data: UserLogin, db: AsyncSession = Depends(get_db)):
-    tokens = await authenticate_user(db, user_data.email, user_data.password)
+async def login(user_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)):
+    # OAuth2PasswordRequestForm uses username instead of email
+    # user_data.username is used instead of user_data.email  
+    tokens = await authenticate_user(db, user_data.username , user_data.password)
     return {"access_token": tokens["access_token"], "refresh_token": tokens["refresh_token"], "token_type": "bearer"}
+
+
 
 # User logout
 @router.post("/logout")

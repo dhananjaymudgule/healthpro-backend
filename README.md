@@ -131,7 +131,7 @@ uvicorn src.app.main:app --reload
 | POST   | `/api/v1/users/password-reset/confirm` | Reset password      |
 
 
-### **File Upload**  
+### **📤 File Upload**  
 | Method | Endpoint                        | Description   |  
 |--------|---------------------------------|--------------|  
 | POST   | `/api/v1/users/upload-file/`    | Upload File  |  

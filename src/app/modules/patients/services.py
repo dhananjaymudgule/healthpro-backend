@@ -3,7 +3,7 @@
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.app.db.repositories.patient_repository import (
-    create_patient, get_patient_by_user_id, update_patient, delete_patient
+    create_patient, get_patient_info, update_patient, delete_patient
 )
 from src.app.modules.patients.schemas import PatientCreate, PatientResponse
 import uuid
@@ -19,7 +19,7 @@ async def create_patient_info(db: AsyncSession, user_id: uuid.UUID, patient: Pat
 
 async def get_patient_info(db: AsyncSession, user_id: uuid.UUID) -> PatientResponse:
     """Retrieve patient information."""
-    patient = await get_patient_by_user_id(db, user_id)
+    patient = await get_patient_info(db, user_id)
     if not patient:
         raise HTTPException(status_code=404, detail="Patient record not found")
     return PatientResponse.model_validate(patient)
